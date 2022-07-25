@@ -5,6 +5,7 @@ from utils.telegram import *
 from PIL import Image
 import cv2 as cv
 import sys
+import math
 
 filename = "prediction.png"
 to_predict = "Con plaga"
@@ -27,7 +28,7 @@ def open_image(image="", predictionText="", prediction={}):
     cv.imwrite(filename, img)
 
     if prediction['label'] == to_predict and prediction['confidence'] >= threshold:
-        caption = f"Se encontró mango {prediction['label']} con un acierto de {round(prediction['confidence'],3)*100}%."
+        caption = f"Se encontró mango {prediction['label']} con un acierto de {math.trunc(pred['confidence']*100)}%."
         send_image_telegram(filename, caption)
 
     k = cv.waitKey(0)
@@ -68,7 +69,7 @@ if __name__ == "__main__":
                 for pred in predictions:
                     if(pred["confidence"] >= threshold_video):
                         prediction = pred
-                        predictionText = f"{pred['label']}: {round(pred['confidence'], 3)*100}%"
+                        predictionText = f"{pred['label']}: {math.trunc(pred['confidence']*100)}%"
 
             cv.putText(frame, predictionText, (0, 20),
                        cv.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2, cv.LINE_4)
@@ -94,7 +95,7 @@ if __name__ == "__main__":
                 for pred in predictions:
                     if(pred["confidence"] >= threshold):
                         prediction = pred
-                        predictionText = f"{pred['label']}: {round(pred['confidence'], 3)*100}%"
+                        predictionText = f"{pred['label']}: {math.trunc(pred['confidence']*100)}%"
                 open_image(args.image, predictionText, prediction)
         else:
             print("Could not find image.")
