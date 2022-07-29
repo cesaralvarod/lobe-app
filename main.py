@@ -27,8 +27,10 @@ def open_image(image="", predictionText="", prediction={}):
     cv.imshow("Display window", img)
     cv.imwrite(filename, img)
 
+    print(prediction)
+
     if prediction['label'] == to_predict and prediction['confidence'] >= threshold:
-        caption = f"Se encontró mango {prediction['label']} con un acierto de {math.trunc(pred['confidence']*100)}%."
+        caption = f"Se encontró mango {prediction['label']} con un acierto de {prediction['confidence']*100}%."
         send_image_telegram(filename, caption)
 
     k = cv.waitKey(0)
@@ -67,9 +69,11 @@ if __name__ == "__main__":
             if predictions:
                 prediction = {}
                 for pred in predictions:
-                    if(pred["confidence"] >= threshold_video):
-                        prediction = pred
+                    if pred["confidence"] >= threshold_video:
                         predictionText = f"{pred['label']}: {math.trunc(pred['confidence']*100)}%"
+
+                        if pred['label'] == to_predict:
+                            send_image_telegram(filename, predictionText)
 
             cv.putText(frame, predictionText, (0, 20),
                        cv.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2, cv.LINE_4)
